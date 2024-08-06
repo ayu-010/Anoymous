@@ -1,11 +1,5 @@
 'use client'
 
-import React, { useState } from 'react';
-import axios, { AxiosError } from 'axios';
-import dayjs from 'dayjs';
-import { X } from 'lucide-react';
-import { Message } from '@/model/User';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,16 +11,22 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
-import { Button } from './ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/components/ui/use-toast';
+import { Message } from '@/model/User';
 import { ApiResponse } from '@/types/ApiResponse';
+import axios, { AxiosError } from 'axios';
+import dayjs from 'dayjs';
+import { X } from 'lucide-react';
+import React from 'react';
+import { Button } from './ui/button';
 
 type MessageCardProps = {
   message: Message;
-  onMessageDelete: (messageId: string) => void;
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>
 };
 
-export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
+export function MessageCard({ message, setMessages }: MessageCardProps) {
   const { toast } = useToast();
 
   const handleDeleteConfirm = async () => {
@@ -39,7 +39,7 @@ export function MessageCard({ message, onMessageDelete }: MessageCardProps) {
       toast({
         title: response.data.message,
       });
-      onMessageDelete(message._id);
+      setMessages(prev => prev.filter(msg => msg._id.toString() !== message._id.toString()));
 
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;

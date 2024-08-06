@@ -5,25 +5,20 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
-import { Message } from '@/model/User';
 import { ApiResponse } from '@/types/ApiResponse';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios, { AxiosError } from 'axios';
 import { Loader2, RefreshCcw } from 'lucide-react';
-import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { AcceptMessageSchema } from '@/schemas/acceptMessageSchemas';
+import { Message } from '@/model/User';
 const Page = () => {
   const [messages,setMessages]=useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSwitchLoading, setIsSwitchLoading] = useState(false);
   const { toast } = useToast();
-
-  const handleDeleteMessage = (messageId: string) => {
-    setMessages(messages.filter((message) => message._id !== messageId));
-  };
 
   
   const { data: session } = useSession();
@@ -75,6 +70,7 @@ const fetchMessages = useCallback(
     setIsSwitchLoading(false);
     try {
       const response = await axios.get<ApiResponse>('/api/get-messages');
+      console.log("reponse haaaaaa huuuuu",response.data.messages)
       setMessages(response.data.messages || []);
       if (refresh) {
         toast({
@@ -214,7 +210,7 @@ const fetchMessages = useCallback(
             <MessageCard
               key={index}
               message={message}
-              onMessageDelete={handleDeleteMessage}
+              setMessages={setMessages}
             />
           ))
         ) : (

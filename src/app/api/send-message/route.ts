@@ -1,7 +1,5 @@
 import dbConnect from "@/lib/dbConnect";
-
 import UserModel from "@/model/User";
-import { Message } from "@/model/User";
 
 
 
@@ -10,6 +8,7 @@ export async function POST(request:Request)
     await dbConnect()
     
     const{username,content}=await request.json()
+    console.log("HELLO", "JELLO", username, content)
     try {
         
         const user=await UserModel.findOne({username})
@@ -38,10 +37,12 @@ export async function POST(request:Request)
    
 
          const newMessage={
-            content,createdAt:new Date()
+            content,
+            createdAt:new Date()
          }
+         console.log(user)
 
-         user.messages.push(newMessage as Message)
+         user.messages.push(newMessage)
          await user.save()
          return Response.json({
             success:true,
